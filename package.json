@@ -1,0 +1,26 @@
+{
+  "name": "generator-llvm",
+  "version": "1.0.0",
+  "description": "",
+  "author": {
+    "name": "Bekket McClane",
+    "email": "yihshyng223@gmail.com"
+  },
+  "license": "Apache-2.0",
+
+  "keywords": [
+    "yeoman-generator",
+    "c++",
+    "cpp",
+    "llvm"
+  ],
+  "files": [
+    "app",
+    "executable",
+    "pass",
+    "tool"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^1.0.0"
+  }
+}
