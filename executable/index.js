@@ -139,7 +139,7 @@ module.exports = class extends Generator {
       );
     }
 
-    // Sub-module
+    /// Sub-module
     // Check property exist - just for safe
     if(this._props.hasOwnProperty('sub')){
       // Check top level project exist
@@ -154,7 +154,7 @@ module.exports = class extends Generator {
       const cmakeImportStr = 
         '\nadd_subdirectory(' + sub.name + ')';
 
-      // Write import statement into top-level cmake script
+      /// Write import statement into top-level cmake script
       // FIXME: The conflict checker would complain
       // if we add new sub-module to exist project
       // since it touch exist(the top-level) cmake script
@@ -163,7 +163,7 @@ module.exports = class extends Generator {
       // Create sub directory
       mkdirp(sub.name);
 
-      // Switch context
+      /// Switch context
       this.destinationRoot(
         this.destinationPath(sub.name)
       );
@@ -171,7 +171,13 @@ module.exports = class extends Generator {
         this.templatePath('subModuleTpl')
       );
 
-      // Copy files
+      /// Copy files
+      // The basic template requires some libraries
+      const inherentDep = ['irreader', 'support', 'core'];
+      inherentDep.forEach(lib => {
+        if(sub.depLibs.indexOf(lib) < 0)
+          sub.depLibs.unshift(lib);
+      });
       this.fs.copyTpl(
         this.templatePath('CMakeLists.txt'),
         this.destinationPath('CMakeLists.txt'),
