@@ -21,6 +21,7 @@
     "tool"
   ],
   "dependencies": {
-    "yeoman-generator": "^1.0.0"
+    "yeoman-generator": "^1.0.0",
+    "mkdirp-promise": "^5.0.1"
   }
 }

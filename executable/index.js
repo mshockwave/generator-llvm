@@ -1,5 +1,6 @@
 var Generator = require('yeoman-generator');
 const path = require('path');
+const mkdirp = require('mkdirp-promise');
 
 module.exports = class extends Generator {
   constructor(args, opts){
@@ -121,7 +122,68 @@ module.exports = class extends Generator {
     }
   }
 
-  default(){
-    this.log(this._props);
+  writing(){
+    //this.log(this._props);
+
+    // Top level project
+    if(this._props.hasOwnProperty('top')){
+      var top = this._props.top;
+      this.fs.copyTpl(
+        this.templatePath('CMakeLists.txt'),
+        this.destinationPath('CMakeLists.txt'),
+        {
+          minCmakeVer: top.minCmakeVer,
+          topProjectName: top.name,
+          llvmInstallDir: top.llvmInstallDir
+        }
+      );
+    }
+
+    // Sub-module
+    // Check property exist - just for safe
+    if(this._props.hasOwnProperty('sub')){
+      // Check top level project exist
+      const topCmakePath = this.destinationPath('CMakeLists.txt');
+      if(!this.fs.exists(topCmakePath)){
+        this.log('Error: CMakeLists.txt not found');
+        this.log('You need to be in the top-level project folder');
+        process.exit(1);
+      }
+
+      var sub = this._props.sub;
+      const cmakeImportStr = 
+        '\nadd_subdirectory(' + sub.name + ')';
+
+      // Write import statement into top-level cmake script
+      // FIXME: The conflict checker would complain
+      // if we add new sub-module to exist project
+      // since it touch exist(the top-level) cmake script
+      this.fs.append(topCmakePath, cmakeImportStr);
+
+      // Create sub directory
+      mkdirp(sub.name);
+
+      // Switch context
+      this.destinationRoot(
+        this.destinationPath(sub.name)
+      );
+      this.sourceRoot(
+        this.templatePath('subModuleTpl')
+      );
+
+      // Copy files
+      this.fs.copyTpl(
+        this.templatePath('CMakeLists.txt'),
+        this.destinationPath('CMakeLists.txt'),
+        {
+          progName: sub.progName,
+          llvmDepLibs: sub.depLibs.join(' ')
+        }
+      );
+      this.fs.copy(
+        this.templatePath('main.cpp'),
+        this.destinationPath('main.cpp')
+      );
+    }
   }
 }
