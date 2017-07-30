@@ -24,7 +24,7 @@ npm install -g yo
 ```
 Install this generator from npm repository
 ```
-TBD
+npm install -g generator-llvm
 ```
 
 ## Usage
