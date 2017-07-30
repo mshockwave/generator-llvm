@@ -1,10 +1,14 @@
 {
   "name": "generator-llvm",
   "version": "1.0.0",
-  "description": "",
+  "description": "Generate templates for LLVM executables/passes",
   "author": {
     "name": "Bekket McClane",
     "email": "yihshyng223@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mshockwave/generator-llvm"
   },
   "license": "Apache-2.0",
 

@@ -1,4 +1,18 @@
-# LLVM Project Templates Generator
+# LLVM Executable/Pass Templates Generator
+
+Generate project templates for executables that use LLVM 
+and LLVM passes.
+
+## Generator Kinds & Guides
+#### Standalone Executable(`executable`)
+A normal executable program that uses LLVM.
+
+#### Pass(`pass`)
+A LLVM pass that can be easily integrated into LLVM project in the future. See [this](https://llvm.org/docs/CMake.html#id15) for more information
+
+#### Executable(`tool`)(Status: _TBD_)
+A executable program that can be easily integrated into LLVM project as one of the tools in the future.
+
 ## Install
 Requirements:
  - [Node.js](https://nodejs.org/en/download/)
@@ -12,16 +26,6 @@ Install this generator from npm repository
 ```
 TBD
 ```
-
-## Generator Kinds & Guides
-#### Standalone Executable(`executable`)
-A normal executable program that uses LLVM.
-
-#### Pass(`pass`)
-A LLVM pass that can be easily integrated into LLVM project in the future. See [this](https://llvm.org/docs/CMake.html#id15) for more information
-
-#### Executable(`tool`)(Status: _TBD_)
-A executable program that can be easily integrated into LLVM project as one of the tools in the future.
 
 ## Usage
 ### Generating Standalone Executable
