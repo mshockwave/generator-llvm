@@ -3,7 +3,10 @@ project(<%= topProjectName %>)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(LLVM_DIR <%= llvmInstallDir %>/lib/cmake/llvm)
+set(LLVM_DIST_PATH "<%= llvmInstallDir %>"
+        CACHE STRING "LLVM distribution install path")
+
+set(LLVM_DIR ${LLVM_DIST_PATH}/lib/cmake/llvm)
 find_package(LLVM REQUIRED CONFIG)
 message(STATUS "Using LLVM Version ${LLVM_PACKAGE_VERSION}")
 
