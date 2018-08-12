@@ -1,6 +1,6 @@
 var Generator = require('yeoman-generator');
 const path = require('path');
-const mkdirp = require('mkdirp-promise');
+const nodefs = require('fs');
 
 module.exports = class extends Generator {
   constructor(args, opts){
@@ -161,7 +161,7 @@ module.exports = class extends Generator {
       this.fs.append(topCmakePath, cmakeImportStr);
 
       // Create sub directory
-      mkdirp(sub.name);
+      nodefs.mkdirSync(sub.name);
 
       /// Switch context
       this.destinationRoot(
