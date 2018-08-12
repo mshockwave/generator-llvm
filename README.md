@@ -47,6 +47,12 @@ Adding new program to existing (pass)project
 ```
 yo llvm:pass append
 ```
+If you like to stay on bleeding edge and want to try the new PassManager pass, add the `--new-pm` at the tail:
+```
+yo llvm::pass init --new-pm
+# Same option applies to the "append" command as well
+```
+The generated pass is also loaded as an external plugin. Please refer to [this article](https://medium.com/@mshockwave/writing-llvm-pass-in-2018-part-i-531c700e85eb) I wrote about how to run a new PassManager pass.
 
 #### Note
 If you append new executable/pass to existing project, it would show the following message:
