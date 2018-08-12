@@ -13,10 +13,24 @@ module.exports = class extends Generator {
     };
   }
 
+  _printUsage() {
+    this.log("Usage: <command> [options]");
+    this.log(this.argumentsHelp());
+    this.log("Available options:");
+    this.log(this.optionsHelp());
+  }
+
   constructor(args, opts){
     super(args, opts);
 
     try{
+      // New PassManager
+      this.option('new-pm', {
+        type: Boolean,
+        description: 'Generate pass that uses new PassManager',
+        default: false
+      });
+
       this.argument('command', {
         type: String,
         description: `
@@ -25,7 +39,7 @@ module.exports = class extends Generator {
         `
       });
     } catch(e){
-      this.log(this.argumentsHelp());
+      this._printUsage();
       process.exit(1);
     }
   }
@@ -53,9 +67,10 @@ module.exports = class extends Generator {
       name: 'llvmInstallDir',
       type: 'input',
       message: 'LLVM install path. NOT the LLVM cmake module path',
-      default: '/usr/local/opt/llvm'
+      default: '/usr/local/opt/llvm',
+      store: true
     }];
-    const newPassPrompts = [{
+    var newPassPrompts = [{
       name: 'passName',
       type: 'input',
       message: 'Pass name',
@@ -84,16 +99,25 @@ module.exports = class extends Generator {
       default: 'FunctionPass'
     },
     {
-      name: 'passDescription',
-      type: 'input',
-      message: 'Description of the pass'
-    },
-    {
       name: 'passShortHand',
       type: 'input',
       message: 'Short name for the pass',
       default: (ans) => ans.passName.toLowerCase()
-    }];
+    }
+    ];
+    if(this.options["new-pm"] === true)
+      newPassPrompts = newPassPrompts.concat({
+        name: 'passVersion',
+        type: 'input',
+        message: 'Version of this pass',
+        default: "v0.1"
+      });
+    else
+      newPassPrompts = newPassPrompts.concat({
+        name: 'passDescription',
+        type: 'input',
+        message: 'Description of the pass'
+      });
 
     const setUpTop = (answers) => {
       var top = this._props.top;
@@ -107,9 +131,12 @@ module.exports = class extends Generator {
       sub.name = answers.passName;
       sub.dirName = answers.passSubDirName;
       sub.scope = answers.passScope.replace(/Pass$/, '');
-      sub.description = (answers.passDescription.length > 0)?
-                          answers.passDescription :
-                          'Description for ' + sub.name;
+      if(this.options["new-pm"] === true)
+        sub.version = answers.passVersion;
+      else
+        sub.description = (answers.passDescription.length > 0)?
+                            answers.passDescription :
+                            'Description for ' + sub.name;
       sub.shortHand = answers.passShortHand;
       return answers;
     }
@@ -136,8 +163,7 @@ module.exports = class extends Generator {
 
       default:
         this.log('Unknown command ' + this.options.command);
-        this.log('Usage: ');
-        this.log(this.argumentsHelp());
+        this._printUsage();
         process.exit(1);
     }
   }
@@ -199,17 +225,30 @@ module.exports = class extends Generator {
           passName: sub.name
         }
       );
-      this.fs.copyTpl(
-        this.templatePath('templatePass.cpp'),
-        this.destinationPath(sub.name + 'Pass.cpp'),
-        {
-          passName: sub.name,
-          passScope: sub.scope,
-          scopeShortHand: this.scopeShorts[sub.scope],
-          passShortHand: sub.shortHand,
-          passDescription: sub.description
-        }
-      );
+      if(this.options["new-pm"] === true)
+        this.fs.copyTpl(
+          this.templatePath('newPMtemplatePass.cpp'),
+          this.destinationPath(sub.name + 'Pass.cpp'),
+          {
+            passName: sub.name,
+            passScope: sub.scope,
+            scopeShortHand: this.scopeShorts[sub.scope],
+            passShortHand: sub.shortHand,
+            passVersion: sub.version
+          }
+        );
+      else
+        this.fs.copyTpl(
+          this.templatePath('templatePass.cpp'),
+          this.destinationPath(sub.name + 'Pass.cpp'),
+          {
+            passName: sub.name,
+            passScope: sub.scope,
+            scopeShortHand: this.scopeShorts[sub.scope],
+            passShortHand: sub.shortHand,
+            passDescription: sub.description
+          }
+        );
     }
   }
 }
