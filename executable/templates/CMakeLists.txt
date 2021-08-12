@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION <%= minCmakeVer %>)
 project(<%= topProjectName %>)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 set(LLVM_DIST_PATH "<%= llvmInstallDir %>"
         CACHE STRING "LLVM distribution install path")
